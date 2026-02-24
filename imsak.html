@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Overlay Imsakiyah Final - Size Locked</title>
+    <title>Overlay Imsakiyah Final - Watermark</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
 
@@ -18,7 +18,6 @@
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             border-bottom: 4px solid #00d2ff;
-            /* width: fit-content; <--- DIHAPUS AGAR TIDAK GOYANG */
             transition: background 0.3s ease, color 0.3s ease;
             height: 90px;
         }
@@ -42,28 +41,51 @@
         .clock-label { font-size: 10px; opacity: 0.8; margin-top: 5px; }
 
         .city-section { 
+            position: relative; /* Ditambahkan agar watermark bisa diatur posisinya dari bawah */
             padding: 0 25px; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
             min-width: 180px; 
             height: 100%; 
         }
         .city-name { font-size: 26px; font-weight: 900; text-transform: uppercase; color: #00d2ff; line-height: 1; margin-bottom: 5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-        .date-text { font-size: 12px; opacity: 0.8; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; }
+        .date-text { font-size: 12px; opacity: 0.8; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
 
         /* Text Color Adjustments on Alert */
         .container.alert-imsak .city-name { color: #2f3640; text-shadow: none; }
         .container.alert-subuh .city-name { color: #FFC312; }
         .container.alert-maghrib .city-name { color: #fff; }
 
+        /* --- WATERMARK STYLES --- */
+        .watermark {
+            position: absolute;
+            bottom: 8px; /* Jarak dari garis bawah container */
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5); /* Semi transparan */
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .tiktok-icon {
+            width: 10px;
+            height: 10px;
+            fill: currentColor;
+        }
+
+        /* Penyesuaian warna watermark saat alert kuning (Imsak) agar tetap terbaca */
+        .container.alert-imsak .watermark { color: rgba(47, 54, 64, 0.6); }
+
         /* --- WRAPPER KANAN (Fix Size Logic) --- */
         .right-wrapper {
-            position: relative; /* Agar anak-anaknya bisa absolute */
+            position: relative; 
             height: 100%;
             display: flex;
             align-items: center;
             padding-right: 25px;
-            /* Kita tidak set width fix pixel disini agar tetap fleksibel, 
-               tapi strukturnya menjamin alert menimpa jadwal tanpa ubah ukuran container */
         }
 
         /* 1. BAGIAN JADWAL */
@@ -71,7 +93,7 @@
             display: flex; 
             gap: 20px; 
             align-items: center; 
-            transition: opacity 0.3s ease; /* Transisi halus saat hilang */
+            transition: opacity 0.3s ease; 
         }
         .time-box { text-align: center; }
         .time-label { font-size: 10px; opacity: 0.7; margin-bottom: 2px; font-weight: 700; letter-spacing: 1px; }
@@ -79,34 +101,28 @@
 
         /* 2. BAGIAN ALERT MESSAGE (Overlay Ghost) */
         .alert-message { 
-            position: absolute; /* Menimpa tepat di atas jadwal */
+            position: absolute; 
             top: 0; left: 0;
             width: 100%; height: 100%;
             display: flex; justify-content: center; align-items: center;
             text-align: center;
-            font-size: 18px; /* Ukuran pas */
+            font-size: 18px; 
             font-weight: 900; 
             text-transform: uppercase; 
             letter-spacing: 1px; 
-            opacity: 0; /* Sembunyi secara default */
+            opacity: 0; 
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
 
         /* --- LOGIC VISIBILITY (Mainin Opacity) --- */
-        /* Saat Alert Aktif: Jadwal jadi transparan (tapi tempatnya masih ada) */
         .container.alert-imsak .schedule-section, 
         .container.alert-subuh .schedule-section, 
-        .container.alert-maghrib .schedule-section { 
-            opacity: 0; 
-        }
+        .container.alert-maghrib .schedule-section { opacity: 0; }
 
-        /* Saat Alert Aktif: Pesan muncul */
         .container.alert-imsak .alert-message, 
         .container.alert-subuh .alert-message, 
-        .container.alert-maghrib .alert-message { 
-            opacity: 1; 
-        }
+        .container.alert-maghrib .alert-message { opacity: 1; }
 
         /* Animasi Pulse */
         @keyframes pulse-yellow { from { box-shadow: 0 0 10px rgba(255, 195, 18, 0.4); } to { box-shadow: 0 0 25px rgba(255, 195, 18, 0.9); } }
@@ -125,6 +141,10 @@
         <div class="city-section">
             <div class="city-name" id="cityName">LOADING...</div>
             <div class="date-text" id="dateDisplay">-- -- --</div>
+            <div class="watermark">
+                <svg class="tiktok-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/></svg>
+                Overlay by IQBAL DWIANSYAH
+            </div>
         </div>
 
         <div class="right-wrapper">
@@ -366,5 +386,4 @@
 
     </script>
 </body>
-
 </html>
